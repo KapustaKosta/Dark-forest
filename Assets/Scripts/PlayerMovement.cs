@@ -6,19 +6,16 @@ public class PlayerMovement : MonoBehaviour
 {
     // Basic movement system 
 
-    public Vector2 speed = new Vector2(2f, 1f);
-    Vector2 movement;
-    //public float speed = 6.0f;
-    //public Rigidbody2D rigitBody2d;
+    public Vector2 m_Speed = new Vector2(2f, 1f);
+    Vector2 m_Movement;
 
-    // Update is called once per frame
     void Update()
     {
         // Input
-        movement.x = Input.GetAxis("Horizontal");
-        movement.y = Input.GetAxis("Vertical"); 
+        m_Movement.x = Input.GetAxis("Horizontal");
+        m_Movement.y = Input.GetAxis("Vertical"); 
 
-        Vector3 translate = new Vector3(movement.x * speed.x, movement.y * speed.y, 0f) * Time.deltaTime;
+        Vector3 translate = new Vector3(m_Movement.x * m_Speed.x, m_Movement.y * m_Speed.y, 0f) * Time.deltaTime;
         transform.Translate(translate);
     }
 }
