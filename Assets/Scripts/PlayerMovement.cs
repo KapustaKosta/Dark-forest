@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     // Basic movement system 
 
-    public Vector2 m_Speed = new Vector2(2f, 1f);
+    public Vector2 m_Speed;
     Vector2 m_Movement;
 
     void Update()
