@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class CurseMechanics : MonoBehaviour
 {
-    private PlayerMovement m_PlayerMovementScript;
+    private PlayerController m_PlayerControllerScript;
     private PlayerHealth m_PlayerHealthScript;
 
     struct PLayerStatsSave
@@ -27,7 +27,7 @@ public class CurseMechanics : MonoBehaviour
 
     private void Awake()
     {
-        m_PlayerMovementScript = GetComponent<PlayerMovement>();
+        m_PlayerControllerScript = GetComponent<PlayerController>();
         m_PlayerHealthScript = GetComponent<PlayerHealth>();
 
         m_CurseTimeText = m_CurseTimeObj.GetComponent<Text>();
@@ -47,7 +47,7 @@ public class CurseMechanics : MonoBehaviour
     private void ActivateCurse()
     {
         // сохраняем некоторую статистику у игрока
-        m_PlayerStats.m_PlayerSpeed = m_PlayerMovementScript.m_Speed;
+        m_PlayerStats.m_PlayerSpeed = m_PlayerControllerScript.m_Speed;
         m_PlayerStats.m_PlayerPower = m_PlayerHealthScript.m_Power;
         Debug.Log(m_PlayerStats.m_PlayerPower);
 
@@ -56,13 +56,13 @@ public class CurseMechanics : MonoBehaviour
         m_CurseParticlesObj.SetActive(true);
 
         // сразу уменьшаем скорость игрока
-        m_PlayerMovementScript.m_Speed *= m_CurseCoeff;
+        m_PlayerControllerScript.m_Speed *= m_CurseCoeff;
     }
 
     private void IncreaseCurse()
     {
         // Уменьшаем скорость
-        m_PlayerMovementScript.m_Speed *= m_CurseCoeff;
+        m_PlayerControllerScript.m_Speed *= m_CurseCoeff;
         
         // Рандомно уменьшаем здоровье
         if (Random.Range(0, 2) == 1)
@@ -81,7 +81,7 @@ public class CurseMechanics : MonoBehaviour
         m_CurseParticlesObj.SetActive(false);
 
         // восстанавливаем некоторые изначальные значения
-        m_PlayerMovementScript.m_Speed = m_PlayerStats.m_PlayerSpeed;
+        m_PlayerControllerScript.m_Speed = m_PlayerStats.m_PlayerSpeed;
         m_PlayerHealthScript.m_Power = m_PlayerStats.m_PlayerPower * 0.95f; // less
     }
 
