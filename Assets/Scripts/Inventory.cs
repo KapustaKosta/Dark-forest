@@ -27,7 +27,7 @@ public class Inventory : MonoBehaviour
     public GameObject scaleObject;
     private Craft_progress scale;
 
-    private Color Grey = new Color(0, 0, 255);
+    private Color Grey = new Color(0.5f, 0.5f, 0.5f);
 
     private bool entered = false;
 
@@ -129,22 +129,22 @@ public class Inventory : MonoBehaviour
 
         if (torch_crafting >= 1)
         {
-            wood_text.text = wood_number.ToString() + "  (" + (wood_number - 1).ToString() + ')';
+            wood_text.text = wood_number.ToString() + "-1";
             wood_text.color = Grey;
 
-            torch_text.text = torch_number.ToString() + "  (" + (torch_number + 1).ToString() + ')';
+            torch_text.text = torch_number.ToString() + "+1";
             torch_text.color = Grey;
 
-            resin_text.text = resin_number.ToString() + "  (" + (resin_number - 1).ToString() + ')';
+            resin_text.text = resin_number.ToString() + "-1";
             resin_text.color = Grey;
 
         }
         else if (shield_crafting >= 1)
         {
-            wood_text.text = wood_number.ToString() + "  (" + (wood_number - 2).ToString() + ')';
+            wood_text.text = wood_number.ToString() + "-2";
             wood_text.color = Grey;
 
-            shield_text.text = shield_number.ToString() + "  (" + (shield_number + 1).ToString() + ')';
+            shield_text.text = shield_number.ToString() + "+1";
             shield_text.color = Grey;
         }
         else
@@ -153,6 +153,26 @@ public class Inventory : MonoBehaviour
             shield_text.text = shield_number.ToString();
             torch_text.text = torch_number.ToString();
             wood_text.text = wood_number.ToString();
+        }
+
+        float torch = Input.GetAxisRaw("Craft torch");
+        float shield = Input.GetAxisRaw("Craft shield");
+
+        if (shield == 1 && !CanCraftShield()) 
+        {
+            wood_text.color = new Color(255, 0, 0);
+        }
+        if (torch == 1 && !CanCraftTorch())
+        {
+            if (wood_number == 0)
+            {
+                wood_text.color = new Color(255, 0, 0);
+            }
+
+            if (resin_number == 0)
+            {
+                resin_text.color = new Color(255, 0, 0);
+            }
         }
     }
 
