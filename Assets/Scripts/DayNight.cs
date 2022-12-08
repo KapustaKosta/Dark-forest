@@ -18,7 +18,7 @@ public class DayNight : MonoBehaviour
 
     private void Start()
     {
-        nowTime = (dayTime / 3)*2;
+        nowTime = (dayTime / 2);
     }
 
     void Update()
