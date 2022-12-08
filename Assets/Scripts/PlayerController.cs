@@ -5,8 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Vector2 m_Speed;
-    public Vector2 m_Movement;
-    private float m_Acceleration = 1.5f;
+    private Vector2 m_Movement;
 
     public GameObject m_DamageCollider;
 
@@ -29,12 +28,6 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        bool isShiftPressed = Input.GetKeyDown(KeyCode.LeftShift) | Input.GetKeyDown(KeyCode.RightShift);
-        if (isShiftPressed)
-            m_Acceleration = 1.5f;
-        else
-            m_Acceleration = 1f;
-
         if (m_IsColliderActive)
             m_ColliderTimePassed += Time.deltaTime;
 
@@ -49,7 +42,7 @@ public class PlayerController : MonoBehaviour
         m_Movement.x = Input.GetAxis("Horizontal");
         m_Movement.y = Input.GetAxis("Vertical");
 
-        Vector3 translate = new Vector3(m_Movement.x * m_Speed.x * m_Acceleration, m_Movement.y * m_Speed.y * m_Acceleration, 0f) * Time.deltaTime;
+        Vector3 translate = new Vector3(m_Movement.x * m_Speed.x, m_Movement.y * m_Speed.y, 0f) * Time.deltaTime;
         transform.Translate(translate);
     }
 }
