@@ -15,11 +15,9 @@ public class Craft_progress : MonoBehaviour
     {
         rectTransfrom = front.GetComponent<RectTransform>();
 
-        // rectTransfrom.sizeDelta = new Vector2(50, 50); // задаем размер   new Vectro2 (width, height)
+        // rectTransfrom.sizeDelta = new Vector2(50, 50); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ   new Vectro2 (width, height)
 
         start_width = rectTransfrom.sizeDelta.x;
-
-        Debug.Log(start_width);
 
     }
 
