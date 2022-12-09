@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
+    public WolfController m_WolfController;
+    public BabaYagaController m_BYController;
+
     public float m_Health = 100f;
     public float m_Power = 10f;
 
@@ -26,10 +29,23 @@ public class PlayerHealth : MonoBehaviour
         m_PowerNumText.text = m_Power.ToString("F1");
     }
 
+    private void GameOver()
+    {
+        this.tag = "Untagged";
+
+        m_WolfController.TurnEnemyOff();
+        m_BYController.TurnEnemyOff();
+    }
+
     private void Update()
     {
         m_HealthNumText.text = m_Health.ToString("F1");
         m_PowerNumText.text = m_Power.ToString("F1");
+
+        if(m_Health <= 0f)
+        {
+            GameOver();
+        }
     }
 
 }

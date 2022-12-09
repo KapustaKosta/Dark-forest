@@ -6,61 +6,67 @@ using Pathfinding; // A* algorithm
 
 public class BabaYagaController : MonoBehaviour
 {
-
+    private AIPath m_AIPath;
     private AIDestinationSetter m_DestSetter;
 
-    public GameObject m_CurseObject; // later will be a Prefab
     public Transform m_PlayerTransform;
-    public GameObject m_EndsOfMap;
+    public GameObject m_EndsOfMap; // баба яга будет отлетать туда!
+    private SpriteRenderer m_SpriteRenderer;
 
-    private Transform[] m_OtherTargets;
-    private bool m_IsFlyAway = false;
-    private float m_FlyingTimePassed = 0f;
-    private float m_MaxFlyingTime = 0f; // always random
+    public CurseMechanics m_CurseMechanicsScript;
+
+    public Transform[] m_OtherTargets; // массив позиций m_EndsOfMap
+    private bool m_IsStartChasingPlayer = false;
 
 
 
     private void Awake()
     {
-        m_CurseObject.SetActive(false);
-
         m_DestSetter = GetComponent<AIDestinationSetter>();
+        m_AIPath = GetComponent<AIPath>();
+        m_SpriteRenderer = GetComponent<SpriteRenderer>();
 
         m_OtherTargets = new Transform[19]; 
         for (int i = 0; i < 19; i++)
-        {
             m_OtherTargets[i] = m_EndsOfMap.transform.GetChild(i).transform;
-        }
-
+    
     }
 
     private void Update()
     {
-        if (m_IsFlyAway)
-            m_FlyingTimePassed += Time.deltaTime;
-
-        if(m_FlyingTimePassed > m_MaxFlyingTime)
+        // делаем игрока целью Бабы Яги!
+        if (m_IsStartChasingPlayer)
         {
-            m_FlyingTimePassed = 0f;
-            m_IsFlyAway = false;
-
             m_DestSetter.target = m_PlayerTransform;
+            m_IsStartChasingPlayer = false;
         }
+
+        // Это будет поворачивать врага влево или вправо,
+        // в зависимости от направления движения
+        if (m_AIPath.desiredVelocity.x >= 0f)
+            m_SpriteRenderer.flipX = true;
+        else if (m_AIPath.desiredVelocity.x <= 0f)
+            m_SpriteRenderer.flipX = false;
     }
 
-    private void ThrowCurse()
+    // когда игрок умер, меняем цель бабы яги! 
+    public void TurnEnemyOff()
     {
-        m_CurseObject.SetActive(true);
-        m_CurseObject.GetComponent<Transform>().position = m_PlayerTransform.position;
+        m_DestSetter.target = m_OtherTargets[Random.Range(0, 19)];
     }
+
+    // Для скрипта CurseMechanics 
+    public void ChasePlayer(bool chase)
+    {
+        m_IsStartChasingPlayer = chase;
+    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.tag == "Player")
         {
-            ThrowCurse();
-            m_IsFlyAway = true;
-
+            m_CurseMechanicsScript.ActivateCurse();
             m_DestSetter.target = m_OtherTargets[Random.Range(0, 19)]; // Это от игрока отвлекает 
         }
     }
