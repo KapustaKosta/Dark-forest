@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Vector2 m_Speed;
-    private Vector2 m_Movement;
+    public Vector2 m_Movement;
     private float m_Acceleration = 1.5f;
 
     public GameObject m_DamageCollider;
