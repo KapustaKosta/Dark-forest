@@ -16,10 +16,10 @@ public class Inventory : MonoBehaviour
     public int start_torch_number = 0;
     public int start_wood_number = 10;
 
-    private int resin_number;
-    private int shield_number;
-    private int torch_number;
-    private int wood_number;
+    public int resin_number;
+    public int shield_number;
+    public int torch_number;
+    public int wood_number;
 
     private int torch_crafting;
     private int shield_crafting;
