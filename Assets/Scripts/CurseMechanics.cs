@@ -5,9 +5,8 @@ using UnityEngine.UI;
 
 public class CurseMechanics : MonoBehaviour
 {
-    private PlayerController m_PlayerControllerScript;
+    private PlayerController m_PCScript;
     public BabaYagaController m_BYController;
-    private PlayerHealth m_PlayerHealthScript;
 
     struct PLayerStatsSave
     {
@@ -39,8 +38,7 @@ public class CurseMechanics : MonoBehaviour
 
     private void Awake()
     {
-        m_PlayerControllerScript = GetComponent<PlayerController>();
-        m_PlayerHealthScript = GetComponent<PlayerHealth>();
+        m_PCScript = GetComponent<PlayerController>();
         m_PlayerSR.color = new Vector4(1f, 1f, 1f, 1f);
 
         m_CurseTimeText = m_CurseTimeObj.GetComponent<Text>();
@@ -105,8 +103,8 @@ public class CurseMechanics : MonoBehaviour
     public void ActivateCurse()
     {
         // сохраняем некоторую статистику у игрока
-        m_PlayerStats.m_PlayerSpeed = m_PlayerControllerScript.m_Speed;
-        m_PlayerStats.m_PlayerPower = m_PlayerHealthScript.m_Power;
+        m_PlayerStats.m_PlayerSpeed = m_PCScript.m_Speed;
+        m_PlayerStats.m_PlayerPower = m_PCScript.m_Power;
 
         m_IsCurseActive = true;
         m_CurseTimeObj.SetActive(true);
@@ -115,7 +113,7 @@ public class CurseMechanics : MonoBehaviour
         m_ParticleSystem.Play();
 
         // сразу уменьшаем скорость игрока
-        m_PlayerControllerScript.m_Speed *= m_CurseCoeff;
+        m_PCScript.m_Speed *= m_CurseCoeff;
         m_PlayerSR.color = new Vector4(0.3f, 0.41f, 0.3f, 1f);
 
         StartCoroutine(ActivateHealingObj());
@@ -132,38 +130,37 @@ public class CurseMechanics : MonoBehaviour
 
     private void SpawnHealingObject()
     {
-        if(m_PlayerControllerScript.m_Movement.x > 0f && m_PlayerControllerScript.m_Movement.y == 0f)
+        if (m_PCScript.m_Movement.x > 0f && m_PCScript.m_Movement.y == 0f)
             m_HealingObj.transform.position = m_HealingPosTransforms[6].position;
-        else if (m_PlayerControllerScript.m_Movement.x < 0f && m_PlayerControllerScript.m_Movement.y == 0f)
+        else if (m_PCScript.m_Movement.x < 0f && m_PCScript.m_Movement.y == 0f)
             m_HealingObj.transform.position = m_HealingPosTransforms[2].position;
-        else if (m_PlayerControllerScript.m_Movement.x == 0f && m_PlayerControllerScript.m_Movement.y > 0f)
+        else if (m_PCScript.m_Movement.x == 0f && m_PCScript.m_Movement.y > 0f)
             m_HealingObj.transform.position = m_HealingPosTransforms[4].position;
-        else if (m_PlayerControllerScript.m_Movement.x == 0f && m_PlayerControllerScript.m_Movement.y < 0f)
+        else if (m_PCScript.m_Movement.x == 0f && m_PCScript.m_Movement.y < 0f)
             m_HealingObj.transform.position = m_HealingPosTransforms[0].position;
-        else if (m_PlayerControllerScript.m_Movement.x > 0f && m_PlayerControllerScript.m_Movement.y > 0f)
+        else if (m_PCScript.m_Movement.x > 0f && m_PCScript.m_Movement.y > 0f)
             m_HealingObj.transform.position = m_HealingPosTransforms[5].position;
-        else if (m_PlayerControllerScript.m_Movement.x > 0f && m_PlayerControllerScript.m_Movement.y < 0f)
+        else if (m_PCScript.m_Movement.x > 0f && m_PCScript.m_Movement.y < 0f)
             m_HealingObj.transform.position = m_HealingPosTransforms[7].position;
-        else if (m_PlayerControllerScript.m_Movement.x < 0f && m_PlayerControllerScript.m_Movement.y < 0f)
+        else if (m_PCScript.m_Movement.x < 0f && m_PCScript.m_Movement.y < 0f)
             m_HealingObj.transform.position = m_HealingPosTransforms[1].position;
-        else if (m_PlayerControllerScript.m_Movement.x < 0f && m_PlayerControllerScript.m_Movement.y > 0f)
+        else if (m_PCScript.m_Movement.x < 0f && m_PCScript.m_Movement.y > 0f)
             m_HealingObj.transform.position = m_HealingPosTransforms[3].position;
         else
-            m_HealingObj.transform.position = m_PlayerControllerScript.transform.position;
-
+            m_HealingObj.transform.position = m_PCScript.transform.position;
     }
 
     private void IncreaseCurse()
     {
         // Уменьшаем скорость
-        m_PlayerControllerScript.m_Speed *= m_CurseCoeff;
+        m_PCScript.m_Speed *= m_CurseCoeff;
         
         // Рандомно уменьшаем здоровье
         if (Random.Range(0, 2) == 1)
-           m_PlayerHealthScript.m_Health -= Random.Range(1f, 2f);
+            m_PCScript.m_Health -= Random.Range(1f, 2f);
 
         // И мощь игрока
-        m_PlayerHealthScript.m_Power -= Random.Range(0f, 1f);
+        m_PCScript.m_Power -= Random.Range(0f, 1f);
 
         Debug.Log("Curse increased!");
     }
@@ -178,8 +175,8 @@ public class CurseMechanics : MonoBehaviour
         m_CurseParticlesObj.SetActive(false);
 
         // восстанавливаем некоторые изначальные значения
-        m_PlayerControllerScript.m_Speed = m_PlayerStats.m_PlayerSpeed;
-        m_PlayerHealthScript.m_Power = m_PlayerStats.m_PlayerPower * 0.95f; // меньше изначального                                                          
+        m_PCScript.m_Speed = m_PlayerStats.m_PlayerSpeed;
+        m_PCScript.m_Power = m_PlayerStats.m_PlayerPower * 0.95f; // меньше изначального                                                          
 
         m_PlayerSR.color = Color.white;
         m_CurseTime = 0f;
