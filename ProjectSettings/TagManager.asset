@@ -8,6 +8,7 @@ TagManager:
   - OtherTarget
   - Damage
   - Healing
+  - PlayerArea
   layers:
   - Default
   - TransparentFX

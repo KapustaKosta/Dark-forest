@@ -9,6 +9,15 @@ public class PlayerController : MonoBehaviour
     public WolfController m_WolfController;
     public BabaYagaController m_BYController;
 
+    public struct PlayerState
+    {
+        public bool Staying; 
+        public bool Running;
+        public bool HasEnemiesAround; 
+        public bool Fighting;
+    }
+    public PlayerState m_PlayerStates;
+
     // -------- Movement --------
     public Vector2 m_Speed;
     public Vector2 m_Movement;
@@ -19,6 +28,7 @@ public class PlayerController : MonoBehaviour
 
     public GameObject m_HealthObj;
     public GameObject m_PowerObj;
+    public GameObject m_GameOverCanvas;
 
     private Text m_HealthNumText;
     private Text m_PowerNumText;
@@ -33,6 +43,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         m_DamageCollider.SetActive(false);
+        m_GameOverCanvas.SetActive(false);
 
         // ---- Health -----
         m_HealthObj.SetActive(true);
@@ -52,6 +63,9 @@ public class PlayerController : MonoBehaviour
         {
             m_DamageCollider.SetActive(true);
             m_IsColliderActive = true;
+            this.tag = "Untagged";
+            
+            m_PlayerStates.Fighting = true;
         }
 
         if (m_IsColliderActive)
@@ -62,11 +76,28 @@ public class PlayerController : MonoBehaviour
             m_ColliderTimePassed = 0f;
             m_IsColliderActive = false;
             m_DamageCollider.SetActive(false);
+
+            m_PlayerStates.Fighting = false;
+
+            this.tag = "Player";
         }
 
         // Input
         m_Movement.x = Input.GetAxis("Horizontal");
         m_Movement.y = Input.GetAxis("Vertical");
+
+        if (m_Movement.x != 0f || m_Movement.y != 0f)
+        {
+            m_PlayerStates.Running = true;
+            m_PlayerStates.Staying = false;
+        }
+
+        if (m_Movement.x == 0f && m_Movement.y == 0f)
+        {
+            m_PlayerStates.Running = false;
+            m_PlayerStates.Staying = true;
+        }
+
 
         // Movement
         Vector3 translate = new Vector3(m_Movement.x * m_Speed.x, m_Movement.y * m_Speed.y, 0f) * Time.deltaTime;
@@ -83,11 +114,21 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void StartGameAgain()
+    {
+        this.tag = "Player";
+        m_Health = 100f;
+        m_Power = 10f;
+
+        m_GameOverCanvas.SetActive(false);
+    }
+
     private void GameOver()
     {
         this.tag = "Untagged";
 
-        m_WolfController.TurnEnemyOff();
-        m_BYController.TurnEnemyOff();
+        this.gameObject.GetComponent<SpriteRenderer>().color = Color.clear;
+
+        m_GameOverCanvas.SetActive(true);
     }
 }

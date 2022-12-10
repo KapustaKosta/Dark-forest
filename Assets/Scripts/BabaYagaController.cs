@@ -17,12 +17,16 @@ public class BabaYagaController : MonoBehaviour
     private AIDestinationSetter m_DestSetter;
 
     public Transform m_PlayerTransform;
-    public GameObject m_EndsOfMap; // баба яга будет отлетать туда!
     private SpriteRenderer m_SpriteRenderer;
+    
+    public GameObject m_EndsOfMap; // баба яга будет отлетать туда!
+    private Transform[] m_OtherTargets; // массив позиций m_EndsOfMap
 
     public CurseMechanics m_CurseMechanicsScript;
     public InstantiateEnemies m_InstEnemiesScript;
-    public PlayerController m_PCScript; 
+    public PlayerController m_PCScript;
+
+    private bool m_IsCurseActive = false;
 
     private float m_Health = 75f;
     private bool m_IsDamaged = false;
@@ -32,8 +36,6 @@ public class BabaYagaController : MonoBehaviour
     private float m_TimeForDamageEffectPassed = 0f;
     private float m_TimeForDamageEffect = 1f;
 
-
-    public Transform[] m_OtherTargets; // массив позиций m_EndsOfMap
     private bool m_IsStartChasingPlayer = false;
 
 
@@ -89,20 +91,15 @@ public class BabaYagaController : MonoBehaviour
         {
             m_PCScript.m_Power *= 1.1f;
             m_InstEnemiesScript.m_IsSpawningBabaYagaAllowed = true;
+            m_PCScript.m_PlayerStates.HasEnemiesAround = false;
             Destroy(this.gameObject);
         }
     }
 
-    // когда игрок умер, меняем цель бабы яги! 
-    public void TurnEnemyOff()
-    {
-        m_DestSetter.target = m_OtherTargets[Random.Range(0, 19)];
-    }
-
     // Для скрипта CurseMechanics 
-    public void ChasePlayer(bool chase)
+    public void ChasePlayer()
     {
-        m_IsStartChasingPlayer = chase;
+        m_IsStartChasingPlayer = true;
     }
 
 
@@ -111,13 +108,14 @@ public class BabaYagaController : MonoBehaviour
         switch (collision.tag)
         {
             case "Damage":
+                m_DestSetter.target = m_OtherTargets[Random.Range(0, 19)]; // Это от игрока отвлекает 
+                
                 m_SpriteRenderer.color = Color.red;
                 
                 float damage = Random.Range(m_PCScript.m_Power, m_PCScript.m_Power * 2f);
                 m_Health -= damage;
                 m_IsDamaged = true;
                 m_MaxTimeFromDamage = Random.Range(2f, 4f);
-                m_DestSetter.target = m_OtherTargets[Random.Range(0, 19)]; // Это от игрока отвлекает 
 
                 break;
 
@@ -130,4 +128,15 @@ public class BabaYagaController : MonoBehaviour
         }
     
     }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag == "PlayerArea")
+            m_PCScript.m_PlayerStates.HasEnemiesAround = true;
+        else
+            m_PCScript.m_PlayerStates.HasEnemiesAround = false;
+    }
+
+
+
 }

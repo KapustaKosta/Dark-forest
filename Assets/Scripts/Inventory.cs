@@ -122,11 +122,6 @@ public class Inventory : MonoBehaviour
 
     void Update_labels()
     {
-        wood_text.color = new Color(255, 255, 255);
-        resin_text.color = new Color(255, 255, 255);
-        torch_text.color = new Color(255, 255, 255);
-        shield_text.color = new Color(255, 255, 255);
-
         if (torch_crafting >= 1)
         {
             wood_text.text = wood_number.ToString() + "-1";

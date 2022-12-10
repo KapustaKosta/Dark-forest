@@ -18,8 +18,8 @@ public class WolfController : MonoBehaviour
     private AIDestinationSetter m_AIDestSetter;
     private SpriteRenderer m_SpriteRenderer;
 
-    public GameObject m_OtherTargets;
-    private Transform[] m_OTTransformArr; // отвлекают волка от игрока!
+    public GameObject m_EndsOfMap;
+    private Transform[] m_OtherTargets; // отвлекают волка от игрока!
 
     public Transform m_PlayerTransform;
 
@@ -41,9 +41,9 @@ public class WolfController : MonoBehaviour
         m_AIPath = GetComponent<AIPath>();
         m_AIDestSetter = GetComponent<AIDestinationSetter>();
 
-        m_OTTransformArr = new Transform[13]; // у нас 13 transforms в юнити
-        for (int i = 0; i < 13; i++)
-            m_OTTransformArr[i] = m_OtherTargets.transform.GetChild(i).transform;
+        m_OtherTargets = new Transform[19]; // у нас 19 transforms в юнити
+        for (int i = 0; i < 19; i++)
+            m_OtherTargets[i] = m_EndsOfMap.transform.GetChild(i).transform;
     }
 
     private void Update()
@@ -84,14 +84,9 @@ public class WolfController : MonoBehaviour
             //audio.Play();
             m_PCScript.m_Power *= 1.05f;
             m_InstEnemiesScript.m_CurrentWolfAmount--;
+            m_PCScript.m_PlayerStates.HasEnemiesAround = false;
             Destroy(this.gameObject);
         }
-    }
-
-    // когда игрок умерает, отвлекаем волка на что-то другое!
-    public void TurnEnemyOff()
-    {
-        m_AIDestSetter.target = m_BYController.m_OtherTargets[Random.Range(0, 19)];
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -107,7 +102,7 @@ public class WolfController : MonoBehaviour
                     m_EnemyPower += Random.Range(1.3f, 1.7f);
                 }
 
-                m_AIDestSetter.target = m_OTTransformArr[Random.Range(0, 13)];
+                m_AIDestSetter.target = m_OtherTargets[Random.Range(0, 19)];
 
                 m_ExcapePlayer = true;
                 m_MaxTimeFromDamage = Random.Range(0.8f, 1.5f);
@@ -118,17 +113,21 @@ public class WolfController : MonoBehaviour
                 
                 float damage = Random.Range(m_PCScript.m_Power, m_PCScript.m_Power * 2f);
                 m_EnemyHealth -= damage;
-                m_AIDestSetter.target = m_OTTransformArr[Random.Range(0, 13)];
+                m_AIDestSetter.target = m_OtherTargets[Random.Range(0, 19)];
 
                 m_ExcapePlayer = true;
                 m_IsDamaged = true;
                 m_MaxTimeFromDamage = Random.Range(1.5f, 2f);
 
                 break;
-
-            case "OtherTarget":
-                m_AIDestSetter.target = m_PlayerTransform;
-                break;
         }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag == "PlayerArea")
+            m_PCScript.m_PlayerStates.HasEnemiesAround = true;
+        else
+            m_PCScript.m_PlayerStates.HasEnemiesAround = false;
     }
 }
