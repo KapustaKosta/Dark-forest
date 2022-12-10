@@ -15,11 +15,8 @@ public class WolfController : MonoBehaviour
     public InstantiateEnemies m_InstEnemiesScript;
 
     private AIPath m_AIPath;
-    private AIDestinationSetter m_AIDestSetter;
+    public AIDestinationSetter m_DestSetter;
     private SpriteRenderer m_SpriteRenderer;
-
-    public GameObject m_EndsOfMap;
-    private Transform[] m_OtherTargets; // отвлекают волка от игрока!
 
     public Transform m_PlayerTransform;
 
@@ -39,11 +36,7 @@ public class WolfController : MonoBehaviour
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
 
         m_AIPath = GetComponent<AIPath>();
-        m_AIDestSetter = GetComponent<AIDestinationSetter>();
-
-        m_OtherTargets = new Transform[19]; // у нас 19 transforms в юнити
-        for (int i = 0; i < 19; i++)
-            m_OtherTargets[i] = m_EndsOfMap.transform.GetChild(i).transform;
+        m_DestSetter = GetComponent<AIDestinationSetter>();
     }
 
     private void Update()
@@ -56,7 +49,7 @@ public class WolfController : MonoBehaviour
         {
             m_ExcapePlayer = false;
             m_TimeFromDamagePassed = 0f;
-            m_AIDestSetter.target = m_PlayerTransform;
+            m_DestSetter.target = m_PlayerTransform;
         }
 
         if(m_IsDamaged)
@@ -87,6 +80,9 @@ public class WolfController : MonoBehaviour
             m_PCScript.m_PlayerStates.HasEnemiesAround = false;
             Destroy(this.gameObject);
         }
+
+        if (m_PCScript.m_IsDestroyWolfs)
+            Destroy(this.gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -94,7 +90,7 @@ public class WolfController : MonoBehaviour
         switch (collision.tag)
         {
             case "Player":
-                if (m_AIDestSetter.target == m_PlayerTransform)
+                if (m_DestSetter.target == m_PlayerTransform)
                 {
                     int enemyDamage = Random.Range(3, 6);
                     m_PCScript.m_Health -= enemyDamage * m_EnemyPower;
@@ -102,7 +98,7 @@ public class WolfController : MonoBehaviour
                     m_EnemyPower += Random.Range(1.3f, 1.7f);
                 }
 
-                m_AIDestSetter.target = m_OtherTargets[Random.Range(0, 19)];
+                m_DestSetter.target = m_BYController.m_OtherTargets[Random.Range(0, 18)];
 
                 m_ExcapePlayer = true;
                 m_MaxTimeFromDamage = Random.Range(0.8f, 1.5f);
@@ -113,7 +109,7 @@ public class WolfController : MonoBehaviour
                 
                 float damage = Random.Range(m_PCScript.m_Power, m_PCScript.m_Power * 2f);
                 m_EnemyHealth -= damage;
-                m_AIDestSetter.target = m_OtherTargets[Random.Range(0, 19)];
+                m_DestSetter.target = m_BYController.m_OtherTargets[Random.Range(0, 18)];
 
                 m_ExcapePlayer = true;
                 m_IsDamaged = true;

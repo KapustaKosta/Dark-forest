@@ -5,7 +5,7 @@ using UnityEngine;
 public class InstantiateEnemies : MonoBehaviour
 {
     public GameObject m_WolfPrefab;
-    public GameObject m_BabaYagaPrefab;
+    public GameObject m_BabaYagaGO;
 
     public DayNight m_DayNightScript;
 
@@ -14,6 +14,8 @@ public class InstantiateEnemies : MonoBehaviour
     private float m_MaxSpawnDelay = 0f; // always random
     public int m_CurrentWolfAmount = 0;
     public bool m_IsSpawningBabaYagaAllowed = true;
+
+    private bool m_IsBabaYagaSpawnAllowed = false;
 
     private Vector2 m_ScreenBounds;
 
@@ -30,39 +32,33 @@ public class InstantiateEnemies : MonoBehaviour
         if (m_CurrentWolfAmount <= m_MaxWolfAmount)
         {
             GameObject wolf = Instantiate(m_WolfPrefab) as GameObject;
-            wolf.transform.position = new Vector2(m_ScreenBounds.x + Random.Range(-30f, 30f), m_ScreenBounds.y + Random.Range(-30f, 30f));
+            wolf.transform.position = new Vector2(m_ScreenBounds.x + Random.Range(-25f, 25f), m_ScreenBounds.y + Random.Range(-25f, 25f));
             wolf.SetActive(true);
 
             m_CurrentWolfAmount++;
         }
     }
 
-    private void SpawnBabaYaga()
-    {
-        if (m_IsSpawningBabaYagaAllowed)
-        {
-            GameObject babaYaga = Instantiate(m_BabaYagaPrefab) as GameObject;
-            babaYaga.transform.position = new Vector2(m_ScreenBounds.x + Random.Range(-30f, 30f), m_ScreenBounds.y + Random.Range(-30f, 30f));
-            babaYaga.SetActive(true);
-
-            m_IsSpawningBabaYagaAllowed = false;
-        }
-    }
-
     // Update is called once per frame
     void Update()
     {
-        if(m_DayNightScript.state == State.Night)
+        if (m_DayNightScript.state == State.Night)
         {
             m_TimeAfterSpawn += Time.deltaTime;
-            if(m_TimeAfterSpawn > m_MaxSpawnDelay)
+            if (m_TimeAfterSpawn > m_MaxSpawnDelay)
             {
                 SpawnWolf();
                 m_TimeAfterSpawn = 0f;
                 m_MaxSpawnDelay = Random.Range(8f, 12f);
             }
 
-            SpawnBabaYaga(); // only one enemy like this
+            if (m_BabaYagaGO.activeSelf == false)
+            {
+                m_BabaYagaGO.SetActive(true);
+                m_BabaYagaGO.gameObject.GetComponent<Transform>().position = new Vector2(m_ScreenBounds.x + Random.Range(-25f, 25f), m_ScreenBounds.y + Random.Range(-25f, 25f));
+            }
         }
+        else
+            m_BabaYagaGO.SetActive(false);
     }
 }

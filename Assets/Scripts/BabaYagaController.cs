@@ -14,27 +14,27 @@ public class BabaYagaController : MonoBehaviour
     private AudioClip fight;
 
     private AIPath m_AIPath;
-    private AIDestinationSetter m_DestSetter;
+    public AIDestinationSetter m_DestSetter;
 
     public Transform m_PlayerTransform;
+    public Transform m_OutOfMap;
     private SpriteRenderer m_SpriteRenderer;
     
     public GameObject m_EndsOfMap; // баба яга будет отлетать туда!
-    private Transform[] m_OtherTargets; // массив позиций m_EndsOfMap
+    public Transform[] m_OtherTargets; // массив позиций m_EndsOfMap
 
     public CurseMechanics m_CurseMechanicsScript;
-    public InstantiateEnemies m_InstEnemiesScript;
     public PlayerController m_PCScript;
 
-    private bool m_IsCurseActive = false;
-
-    private float m_Health = 75f;
+    private float m_Health = 150f;
     private bool m_IsDamaged = false;
     private float m_TimeFromDamagePassed = 0f;
     private float m_MaxTimeFromDamage = 0f; // always random
 
     private float m_TimeForDamageEffectPassed = 0f;
     private float m_TimeForDamageEffect = 1f;
+
+    private bool m_ExecuteDeathFunc = true;
 
     private bool m_IsStartChasingPlayer = false;
 
@@ -48,6 +48,14 @@ public class BabaYagaController : MonoBehaviour
         m_OtherTargets = new Transform[19];
         for (int i = 0; i < 19; i++)
             m_OtherTargets[i] = m_EndsOfMap.transform.GetChild(i).transform;
+
+        // Resetting statistics
+        m_ExecuteDeathFunc = true;
+        m_Health = 150f; 
+        m_IsDamaged = false;
+        m_IsStartChasingPlayer = false;
+        m_TimeFromDamagePassed = m_MaxTimeFromDamage = 0f;
+        m_TimeForDamageEffectPassed = 0f;
     }
 
     private void Update()
@@ -87,12 +95,15 @@ public class BabaYagaController : MonoBehaviour
             m_SpriteRenderer.flipX = false;
 
         // If no health
-        if(m_Health <= 0f)
+        if(m_Health <= 0f && m_ExecuteDeathFunc)
         {
             m_PCScript.m_Power *= 1.1f;
-            m_InstEnemiesScript.m_IsSpawningBabaYagaAllowed = true;
             m_PCScript.m_PlayerStates.HasEnemiesAround = false;
-            Destroy(this.gameObject);
+
+            m_AIPath.canMove = false;
+            transform.position = m_OutOfMap.position;
+
+            m_ExecuteDeathFunc = false;
         }
     }
 
@@ -102,31 +113,33 @@ public class BabaYagaController : MonoBehaviour
         m_IsStartChasingPlayer = true;
     }
 
+    public void CanMove(bool move)
+    {
+        m_AIPath.canMove = move;
+    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         switch (collision.tag)
         {
+            case "Player":
+                //m_AudioSource.clip = fight;
+                //m_AudioSource.Play();
+                m_CurseMechanicsScript.ActivateCurse();
+                m_DestSetter.target = m_OtherTargets[Random.Range(0, 18)]; // Это от игрока отвлекает 
+                break;
+            
             case "Damage":
-                m_DestSetter.target = m_OtherTargets[Random.Range(0, 19)]; // Это от игрока отвлекает 
-                
+                m_DestSetter.target = m_OtherTargets[Random.Range(0, 18)]; // Это от игрока отвлекает 
                 m_SpriteRenderer.color = Color.red;
                 
                 float damage = Random.Range(m_PCScript.m_Power, m_PCScript.m_Power * 2f);
                 m_Health -= damage;
                 m_IsDamaged = true;
                 m_MaxTimeFromDamage = Random.Range(2f, 4f);
-
-                break;
-
-            case "Player":
-                //m_AudioSource.clip = fight;
-                //m_AudioSource.Play();
-                m_CurseMechanicsScript.ActivateCurse();
-                m_DestSetter.target = m_OtherTargets[Random.Range(0, 19)]; // Это от игрока отвлекает 
                 break;
         }
-    
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -136,7 +149,4 @@ public class BabaYagaController : MonoBehaviour
         else
             m_PCScript.m_PlayerStates.HasEnemiesAround = false;
     }
-
-
-
 }
