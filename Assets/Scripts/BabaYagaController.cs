@@ -7,7 +7,7 @@ using Pathfinding; // A* algorithm
 public class BabaYagaController : MonoBehaviour
 {
     [SerializeField]
-    private AudioSource audio;
+    private AudioSource m_AudioSource;
     [SerializeField]
     private AudioClip calm;
     [SerializeField]
@@ -73,8 +73,8 @@ public class BabaYagaController : MonoBehaviour
     {
         if(collision.tag == "Player")
         {
-            audio.clip = fight;
-            audio.Play();
+            //m_AudioSource.clip = fight;
+            //m_AudioSource.Play();
             m_CurseMechanicsScript.ActivateCurse();
             m_DestSetter.target = m_OtherTargets[Random.Range(0, 19)]; // Это от игрока отвлекает 
         }

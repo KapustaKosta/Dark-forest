@@ -68,8 +68,8 @@ public class WolfController : MonoBehaviour
         // Если закончилось здоровье - смерть!
         if (m_EnemyHealth <= 0f)
         {
-            audio.clip = calm;
-            audio.Play();
+            //audio.clip = calm;
+            //audio.Play();
             Destroy(m_ThisGameObj);
         }
     }
@@ -85,10 +85,13 @@ public class WolfController : MonoBehaviour
         switch (collision.tag)
         {
             case "Player":
-                int enemyDamage = Random.Range(3, 6);
-                m_PlayerHealthScript.m_Health -= enemyDamage * m_EnemyPower;
-                m_PlayerHealthScript.m_Power -= Random.Range(0.1f, m_EnemyPower / 10f);
-                m_EnemyPower += Random.Range(1.3f, 1.7f);
+                if (m_AIDestSetter.target == m_PlayerTransform)
+                {
+                    int enemyDamage = Random.Range(3, 6);
+                    m_PlayerHealthScript.m_Health -= enemyDamage * m_EnemyPower;
+                    m_PlayerHealthScript.m_Power -= Random.Range(0.1f, m_EnemyPower / 10f);
+                    m_EnemyPower += Random.Range(1.3f, 1.7f);
+                }
 
                 m_AIDestSetter.target = m_OTTransformArr[Random.Range(0, 13)];
 
