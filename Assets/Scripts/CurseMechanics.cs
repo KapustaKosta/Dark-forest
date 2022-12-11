@@ -17,7 +17,7 @@ public class CurseMechanics : MonoBehaviour
 
     private float m_CurseCoeff = 0.95f;
     private float m_CurseTime = 0f; // для ui
-    private bool m_IsCurseActive = false;
+    public bool m_IsCurseActive = false;
     private const float m_TimeToWait = 2f;
     private float m_TimePassed = 0f; // для проклятья 
 
@@ -44,7 +44,7 @@ public class CurseMechanics : MonoBehaviour
         m_CurseTimeText = m_CurseTimeObj.GetComponent<Text>();
         m_CurseTimeObj.SetActive(false);
         m_CurseParticlesObj.SetActive(false);
-        m_HealingObj.SetActive(false); 
+        m_HealingObj.SetActive(false);
 
         m_CurseObject.SetActive(false);
 
@@ -102,6 +102,8 @@ public class CurseMechanics : MonoBehaviour
     //
     public void ActivateCurse()
     {
+        Debug.Log("Curse activated");
+
         // сохраняем некоторую статистику у игрока
         m_PlayerStats.m_PlayerSpeed = m_PCScript.m_Speed;
         m_PlayerStats.m_PlayerPower = m_PCScript.m_Power;
@@ -122,7 +124,7 @@ public class CurseMechanics : MonoBehaviour
     private IEnumerator ActivateHealingObj()
     {
         // всегда случайное время появления)
-        yield return new WaitForSeconds(Random.Range(1.5f, 5f));
+        yield return new WaitForSeconds(Random.Range(1f, 5f));
         m_HealingObj.SetActive(true);
         m_HealingObj.GetComponent<SpriteRenderer>().color = new Vector4(1f, 0f, 0f, 1f);
         m_IsHealingObjectActive = true;
@@ -161,18 +163,17 @@ public class CurseMechanics : MonoBehaviour
 
         // И мощь игрока
         m_PCScript.m_Power -= Random.Range(0f, 1f);
-
-        Debug.Log("Curse increased!");
     }
 
-    public IEnumerator DisactivateCurse()
+    public void DisactivateCurse()
     {
-        yield return new WaitForSeconds(Random.Range(1f, 2f));
+        Debug.Log("Curse disactivated");
 
         m_IsCurseActive = false;
         m_CurseTimeObj.SetActive(false);
         m_CurseObject.SetActive(false);
         m_CurseParticlesObj.SetActive(false);
+        m_ParticleSystem.Stop();
 
         // восстанавливаем некоторые изначальные значения
         m_PCScript.m_Speed = m_PlayerStats.m_PlayerSpeed;
@@ -184,6 +185,6 @@ public class CurseMechanics : MonoBehaviour
         m_IsHealingObjectActive = false;
         m_HealingObj.SetActive(false);
 
-        m_BYController.ChasePlayer(true); // баба яга снова начинает следовать за игроком!!
+        m_BYController.ChasePlayer(); // баба яга снова начинает следовать за игроком!!
     }
 }
