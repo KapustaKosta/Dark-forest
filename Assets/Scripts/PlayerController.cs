@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField]
+    private Animator animator;
+
     public WolfController m_WolfController;
     public BabaYagaController m_BYController;
     private CurseMechanics m_CurseMechanics;
@@ -72,6 +76,7 @@ public class PlayerController : MonoBehaviour
             this.tag = "Untagged";
             
             m_PlayerStates.Fighting = true;
+            animator.SetBool("isFighting", true);
         }
 
         if (m_IsColliderActive)
@@ -84,6 +89,7 @@ public class PlayerController : MonoBehaviour
             m_DamageCollider.SetActive(false);
 
             m_PlayerStates.Fighting = false;
+            animator.SetBool("isFighting", false);
 
             this.tag = "Player";
         }
@@ -92,14 +98,25 @@ public class PlayerController : MonoBehaviour
         m_Movement.x = Input.GetAxis("Horizontal");
         m_Movement.y = Input.GetAxis("Vertical");
 
+        if(m_Movement.x < 0f)
+        {
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, transform.localScale.y);
+        }
+        else
+        {
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y);
+        }
+
         if (m_Movement.x != 0f || m_Movement.y != 0f)
         {
+            animator.SetBool("isWalking", true);
             m_PlayerStates.Running = true;
             m_PlayerStates.Staying = false;
         }
 
         if (m_Movement.x == 0f && m_Movement.y == 0f)
         {
+            animator.SetBool("isWalking", false);
             m_PlayerStates.Running = false;
             m_PlayerStates.Staying = true;
         }
@@ -123,7 +140,8 @@ public class PlayerController : MonoBehaviour
 
     public void StartGameAgain()
     {
-        this.tag = "Player";
+        SceneManager.LoadScene(0);
+/*        this.tag = "Player";
         m_Health = 100f;
 
         m_Speed = new Vector2(4.5f, 3.3f);
@@ -136,7 +154,7 @@ public class PlayerController : MonoBehaviour
 
         m_IsDestroyWolfs = false;
 
-        m_GameOverCanvas.SetActive(false);
+        m_GameOverCanvas.SetActive(false);*/
     }
 
     private void GameOver()
