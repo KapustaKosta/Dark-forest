@@ -15,12 +15,12 @@ public class TreesFiller : MonoBehaviour
     void Start()
     {
         float boundsSizeY = forestPlace.bounds.size.y;
-        float startY = forestPlace.transform.localPosition.y  + boundsSizeY / 2;
-        float endY = forestPlace.transform.localPosition.y  - boundsSizeY / 2;
+        float startY = forestPlace.transform.position.y  + boundsSizeY / 2;
+        float endY = forestPlace.transform.position.y  - boundsSizeY / 2;
 
         float boundsSizeX = forestPlace.bounds.size.x;
-        float startX = forestPlace.transform.localPosition.x - boundsSizeX / 2;
-        float endX = forestPlace.transform.localPosition.x + boundsSizeX / 2;
+        float startX = forestPlace.transform.position.x - boundsSizeX / 2;
+        float endX = forestPlace.transform.position.x + boundsSizeX / 2;
 
         int order = startOrder;
         for (float y = startY; y >= endY; y -= distance + Random.Range(0, distance/5))
