@@ -15,8 +15,6 @@ public class InstantiateEnemies : MonoBehaviour
     public int m_CurrentWolfAmount = 0;
     public bool m_IsSpawningBabaYagaAllowed = true;
 
-    private bool m_IsBabaYagaSpawnAllowed = false;
-
     private Vector2 m_ScreenBounds;
 
 

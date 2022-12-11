@@ -126,6 +126,8 @@ public class PlayerController : MonoBehaviour
         this.tag = "Player";
         m_Health = 100f;
 
+        m_Speed = new Vector2(4.5f, 3.3f);
+
         this.gameObject.GetComponent<SpriteRenderer>().color = new Vector4(1f, 1f, 1f, 1f);
 
         m_WolfController.m_DestSetter.target = transform;
@@ -144,6 +146,8 @@ public class PlayerController : MonoBehaviour
 
         m_Health = 0f;
         m_HealthNumText.text = m_Health.ToString();
+
+        m_Speed = Vector2.zero;
 
         this.gameObject.GetComponent<SpriteRenderer>().color = new Vector4(0f, 0f, 0f, 0f);
 
